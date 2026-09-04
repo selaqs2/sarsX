@@ -1,683 +1,348 @@
--- XXSY Hub - SarsX Hub Edition
+-- SarsX Hub - Games Portal Extension
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local CoreGui = game:GetService("CoreGui")
-local Camera = workspace.CurrentCamera
-local LocalPlayer = Players.LocalPlayer
-
--- Ayarlar Tablosu
-getgenv().XXSYSettings = {
-    ESP = false,
-    Box = false,
-    Info = false,
-    Tracers = false,
-    Skeleton = false,
-    Rainbow = false,
-    Aimbot = false,
-    MobileAimbot = false, -- Yeni Mobil Aimbot Ayarı
-    FOV = false,
-    FOVRadius = 120,
-    TriggerBot = false,
-    ArmRainbow = false,
-    ESPColor = Color3.fromRGB(255, 215, 0),
-    FOVColor = Color3.fromRGB(255, 215, 0)
-}
-
--- Rayfield Penceresi Oluşturma
 local Window = Rayfield:CreateWindow({
-    Name = "SarsX Hub",
-    LoadingTitle = "SarsX Interface Suite",
+    Name = "SarsX Hub | Games",
+    LoadingTitle = "SarsX Portal Suite",
     LoadingSubtitle = "by SarsX",
     ConfigurationSaving = {
         Enabled = false,
         FolderName = "SarsXHub",
-        FileName = "Config"
+        FileName = "GamesConfig"
     },
     KeySystem = false,
     ToggleAnimations = true,
-    Discord = {
-        Enabled = false,
-        Invite = "noinvite",
-        RememberJoins = true
-    },
 })
 
--- Sekmeler
-local CombatTab = Window:CreateTab("🎯 Combat", 4483362458)
-local VisualsTab = Window:CreateTab("👁️ Visuals (ESP)", 4483345998)
-local MiscTab = Window:CreateTab("⚙️ Misc", 4483362458)
-local SettingsTab = Window:CreateTab("👑 Ayarlar", 4483362458)
+-- Games Sekmesi
+local GamesTab = Window:CreateTab("🎮 Games", 4483362458)
 
--- ================= COMBAT TAB =================
-CombatTab:CreateSection("Aimbot Ayarları")
+GamesTab:CreateSection("Mevcut Oyunlar & Scriptler")
 
-CombatTab:CreateToggle({
-    Name = "Aimbot (Sağ Tık Basılı Tut - PC)",
-    CurrentValue = false,
-    Flag = "AimbotToggle",
-    Callback = function(Value)
-        getgenv().XXSYSettings.Aimbot = Value
-    end,
+GamesTab:CreateParagraph({
+    Title = "SarsX Hub Ana Script",
+    Content = "Aşağıdaki butona tıklayarak SarsX Hub mobil uyumlu aimbot ve ESP scriptini oyuna enjekte edebilirsin."
 })
 
-CombatTab:CreateToggle({
-    Name = "Mobil Aimbot (Dürbünsüz / Direk Hedef)",
-    CurrentValue = false,
-    Flag = "MobileAimbotToggle",
-    Callback = function(Value)
-        getgenv().XXSYSettings.MobileAimbot = Value
-    end,
-})
-
-CombatTab:CreateToggle({
-    Name = "FOV Çemberini Göster",
-    CurrentValue = false,
-    Flag = "FOVToggle",
-    Callback = function(Value)
-        getgenv().XXSYSettings.FOV = Value
-    end,
-})
-
-CombatTab:CreateSlider({
-    Name = "FOV Yarıçapı (Boyutu)",
-    Range = {50, 400},
-    Increment = 5,
-    Suffix = "px",
-    CurrentValue = 120,
-    Flag = "FOVRadiusSlider",
-    Callback = function(Value)
-        getgenv().XXSYSettings.FOVRadius = Value
-    end,
-})
-
-CombatTab:CreateColorPicker({
-    Name = "FOV Çember Rengi",
-    Color = Color3.fromRGB(255, 215, 0),
-    Flag = "FOVColorPicker",
-    Callback = function(Value)
-        getgenv().XXSYSettings.FOVColor = Value
-    end,
-})
-
-CombatTab:CreateSection("TriggerBot")
-
-CombatTab:CreateToggle({
-    Name = "TriggerBot (Otomatik Ateş)",
-    CurrentValue = false,
-    Flag = "TriggerToggle",
-    Callback = function(Value)
-        getgenv().XXSYSettings.TriggerBot = Value
-    end,
-})
-
--- ================= VISUALS TAB =================
-VisualsTab:CreateSection("ESP Özellikleri")
-
-VisualsTab:CreateToggle({
-    Name = "ESP (Chams / Highlight)",
-    CurrentValue = false,
-    Flag = "ESPToggle",
-    Callback = function(Value)
-        getgenv().XXSYSettings.ESP = Value
-    end,
-})
-
-VisualsTab:CreateColorPicker({
-    Name = "ESP Renk Seçici",
-    Color = Color3.fromRGB(255, 215, 0),
-    Flag = "ESPColorPicker",
-    Callback = function(Value)
-        getgenv().XXSYSettings.ESPColor = Value
-    end,
-})
-
-VisualsTab:CreateToggle({
-    Name = "CS:GO Box & Can Barı",
-    CurrentValue = false,
-    Flag = "BoxToggle",
-    Callback = function(Value)
-        getgenv().XXSYSettings.Box = Value
-    end,
-})
-
-VisualsTab:CreateToggle({
-    Name = "İsim / Can / Mesafe Bilgisi",
-    CurrentValue = false,
-    Flag = "InfoToggle",
-    Callback = function(Value)
-        getgenv().XXSYSettings.Info = Value
-    end,
-})
-
-VisualsTab:CreateToggle({
-    Name = "Tracers (Çizgiler)",
-    CurrentValue = false,
-    Flag = "TracerToggle",
-    Callback = function(Value)
-        getgenv().XXSYSettings.Tracers = Value
-    end,
-})
-
-VisualsTab:CreateToggle({
-    Name = "R6 İskelet (Skeleton)",
-    CurrentValue = false,
-    Flag = "SkeletonToggle",
-    Callback = function(Value)
-        getgenv().XXSYSettings.Skeleton = Value
-    end,
-})
-
--- ================= MISC TAB =================
-MiscTab:CreateSection("Görünüm & Renkler")
-
-MiscTab:CreateToggle({
-    Name = "Gökkuşağı (Rainbow) ESP",
-    CurrentValue = false,
-    Flag = "RainbowToggle",
-    Callback = function(Value)
-        getgenv().XXSYSettings.Rainbow = Value
-    end,
-})
-
-MiscTab:CreateToggle({
-    Name = "Kol / Silah Gökkuşağı Rengi",
-    CurrentValue = false,
-    Flag = "ArmRainbowToggle",
-    Callback = function(Value)
-        getgenv().XXSYSettings.ArmRainbow = Value
-    end,
-})
-
--- Tam Renk Enjeksiyonu Fonksiyonu
-local function applyFullTheme(mainColor, textColor)
-    pcall(function()
-        for _, obj in ipairs(CoreGui:GetDescendants()) do
-            if obj:IsA("UIStroke") then
-                if obj.Color ~= Color3.fromRGB(0, 0, 0) and obj.Color ~= Color3.fromRGB(40, 40, 40) then
-                    obj.Color = mainColor
-                end
-            elseif obj:IsA("Frame") or obj:IsA("ImageButton") or obj:IsA("ScrollingFrame") then
-                local bg = obj.BackgroundColor3
-                if (bg.R > 0.6 and bg.G > 0.5) or (bg == Color3.fromRGB(212, 175, 55)) then
-                    obj.BackgroundColor3 = mainColor
-                end
-            elseif obj:IsA("TextLabel") or obj:IsA("TextButton") or obj:IsA("TextBox") then
-                if obj.TextColor3 ~= Color3.fromRGB(255, 255, 255) and obj.TextColor3 ~= Color3.fromRGB(0, 0, 0) then
-                    obj.TextColor3 = textColor
-                end
-            end
-        end
-    end)
-end
-
--- ================= SETTINGS TAB =================
-SettingsTab:CreateSection("Hazır Tema Paletleri")
-
-SettingsTab:CreateParagraph({Title = "Tema Seçimi", Content = "Tıkladığında tüm menü anında seçtiğin renge döner."})
-
-SettingsTab:CreateButton({
-    Name = "👑 Royal Altın Teması",
+GamesTab:CreateButton({
+    Name = "🚀 SarsX Hub (Aimbot & ESP)",
     Callback = function()
-        applyFullTheme(Color3.fromRGB(212, 175, 55), Color3.fromRGB(255, 223, 128))
-        Rayfield:Notify({Title = "Tema Değişti", Content = "Royal Altın uygulandı!", Duration = 1})
-    end,
-})
-
-SettingsTab:CreateButton({
-    Name = "🔵 Buz Mavisi Teması",
-    Callback = function()
-        applyFullTheme(Color3.fromRGB(0, 162, 255), Color3.fromRGB(200, 235, 255))
-        Rayfield:Notify({Title = "Tema Değişti", Content = "Buz Mavisi uygulandı!", Duration = 1})
-    end,
-})
-
-SettingsTab:CreateButton({
-    Name = "🟢 Neon Yeşil Teması",
-    Callback = function()
-        applyFullTheme(Color3.fromRGB(0, 255, 100), Color3.fromRGB(200, 255, 210))
-        Rayfield:Notify({Title = "Tema Değişti", Content = "Neon Yeşil uygulandı!", Duration = 1})
-    end,
-})
-
-SettingsTab:CreateButton({
-    Name = "🔴 Kan Kırmızı Teması",
-    Callback = function()
-        applyFullTheme(Color3.fromRGB(255, 50, 50), Color3.fromRGB(255, 210, 210))
-        Rayfield:Notify({Title = "Tema Değişti", Content = "Kan Kırmızı uygulandı!", Duration = 1})
-    end,
-})
-
--- FOV Çemberi Kurulumu
-local FOVGui = Instance.new("ScreenGui")
-FOVGui.Name = "FOVCircleGui"
-FOVGui.Parent = CoreGui
-
-local FOVFrame = Instance.new("Frame")
-FOVFrame.Parent = FOVGui
-FOVFrame.BackgroundTransparency = 1
-FOVFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-
-local FOVStroke = Instance.new("UIStroke")
-FOVStroke.Color = Color3.fromRGB(255, 215, 0)
-FOVStroke.Thickness = 2
-FOVStroke.Parent = FOVFrame
-
-local FOVCorner = Instance.new("UICorner")
-FOVCorner.CornerRadius = UDim.new(1, 0)
-FOVCorner.Parent = FOVFrame
-
-local function getRainbowColor()
-    return Color3.fromHSV((tick() * 5) % 1, 1, 1)
-end
-
--- ESP Cache ve Yönetimi
-local espCache = {}
-
-local function removeESP(player)
-    pcall(function()
-        if espCache[player] then
-            if espCache[player].Highlight then espCache[player].Highlight:Destroy() end
-            if espCache[player].Billboard then espCache[player].Billboard:Destroy() end
-            if espCache[player].Line then pcall(function() espCache[player].Line:Remove() end) end
-            if espCache[player].BoxOutline then pcall(function() espCache[player].BoxOutline:Remove() end) end
-            if espCache[player].BoxInline then pcall(function() espCache[player].BoxInline:Remove() end) end
-            if espCache[player].HealthBarOutline then pcall(function() espCache[player].HealthBarOutline:Remove() end) end
-            if espCache[player].HealthBarInline then pcall(function() espCache[player].HealthBarInline:Remove() end) end
-            if espCache[player].SkeletonLines then
-                for _, line in pairs(espCache[player].SkeletonLines) do
-                    pcall(function() line:Remove() end)
-                end
-            end
-            espCache[player] = nil
-        end
-    end)
-end
-
-local function setupESP(player)
-    if player == LocalPlayer then return end
-    removeESP(player)
-
-    local function applyToCharacter(char)
         pcall(function()
-            removeESP(player)
-            local humanoidRootPart = char:WaitForChild("HumanoidRootPart", 5)
-            local head = char:WaitForChild("Head", 5)
-            local humanoid = char:WaitForChild("Humanoid", 5)
-            if not humanoidRootPart or not head or not humanoid then return end
-
-            local highlight = Instance.new("Highlight")
-            highlight.Adornee = char
-            highlight.FillColor = Color3.fromRGB(255, 215, 0)
-            highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-            highlight.FillTransparency = 0.5
-            highlight.Enabled = false
-            highlight.Parent = char
-
-            local billboard = Instance.new("BillboardGui")
-            billboard.Adornee = head
-            billboard.Size = UDim2.new(0, 200, 0, 50)
-            billboard.StudsOffset = Vector3.new(0, 2.5, 0)
-            billboard.AlwaysOnTop = true
-            billboard.Enabled = false
-
-            local textLabel = Instance.new("TextLabel")
-            textLabel.Parent = billboard
-            textLabel.BackgroundTransparency = 1
-            textLabel.Size = UDim2.new(1, 0, 1, 0)
-            textLabel.Font = Enum.Font.FredokaOne
-            textLabel.TextSize = 13
-            textLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
-            textLabel.TextStrokeTransparency = 0
-            textLabel.Text = player.Name
-            billboard.Parent = char
-
-            local tracerLine = Drawing.new("Line")
-            tracerLine.Visible = false
-            tracerLine.Thickness = 1.5
-
-            local boxOutline = Drawing.new("Square")
-            boxOutline.Visible = false
-            boxOutline.Thickness = 3
-            boxOutline.Filled = false
-            boxOutline.Color = Color3.fromRGB(0, 0, 0)
-
-            local boxInline = Drawing.new("Square")
-            boxInline.Visible = false
-            boxInline.Thickness = 1.5
-            boxInline.Filled = false
-
-            local healthBarOutline = Drawing.new("Line")
-            healthBarOutline.Visible = false
-            healthBarOutline.Thickness = 3
-            healthBarOutline.Color = Color3.fromRGB(0, 0, 0)
-
-            local healthBarInline = Drawing.new("Line")
-            healthBarInline.Visible = false
-            healthBarInline.Thickness = 1
-            healthBarInline.Color = Color3.fromRGB(0, 255, 0)
-
-            -- R6 İskelet Bağlantıları
-            local skeletonBones = {
-                "Head_Torso",
-                "LeftArm_Torso",
-                "RightArm_Torso",
-                "LeftLeg_Torso",
-                "RightLeg_Torso"
-            }
-            local skeletonLines = {}
-            for _, boneName in ipairs(skeletonBones) do
-                local l = Drawing.new("Line")
-                l.Visible = false
-                l.Thickness = 1.5
-                skeletonLines[boneName] = l
-            end
-
-            espCache[player] = {
-                Highlight = highlight,
-                Billboard = billboard,
-                Text = textLabel,
-                Line = tracerLine,
-                BoxOutline = boxOutline,
-                BoxInline = boxInline,
-                HealthBarOutline = healthBarOutline,
-                HealthBarInline = healthBarInline,
-                SkeletonLines = skeletonLines,
-                Character = char,
-                Humanoid = humanoid,
-                RootPart = humanoidRootPart,
-                Head = head
-            }
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/selaqs2/sarsX/refs/heads/main/sarsX", true))()
+            Rayfield:Notify({
+                Title = "Başarılı!",
+                Content = "SarsX Hub başarıyla yüklendi ve çalıştırıldı.",
+                Duration = 3
+            })
         end)
-    end
+    end,
+})
 
-    player.CharacterAdded:Connect(applyToCharacter)
-    if player.Character then
-        task.spawn(function() applyToCharacter(player.Character) end)
-    end
-end
+GamesTab:CreateSection("Özel Oyun Scriptleri")
 
-for _, p in ipairs(Players:GetPlayers()) do setupESP(p) end
-Players.PlayerAdded:Connect(setupESP)
-Players.PlayerRemoving:Connect(removeESP)
-
--- Sağ Tık Kontrolü (PC için)
-local aimbotHolding = false
-UserInputService.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton2 then aimbotHolding = true end
-end)
-UserInputService.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton2 then aimbotHolding = false end
-end)
-
--- TriggerBot Döngüsü
-task.spawn(function()
-    while task.wait(0.1) do
+GamesTab:CreateButton({
+    Name = "🥚 Steal an Egg",
+    Callback = function()
         pcall(function()
-            if getgenv().XXSYSettings.TriggerBot then
-                local mouse = LocalPlayer:GetMouse()
-                local target = mouse.Target
-                if target and target.Parent then
-                    local character = target.Parent
-                    local humanoid = character:FindFirstChild("Humanoid")
-                    if humanoid and humanoid.Health > 0 then
-                        local player = Players:GetPlayerFromCharacter(character)
-                        if player and player ~= LocalPlayer then
-                            task.wait(math.random(30, 80) / 1000)
-                            mouse1click()
-                            task.wait(0.2)
-                        end
-                    end
-                end
-            end
+            loadstring(game:HttpGet("https://rawscripts.net/raw/Steal-An-Egg-bypass-anti-cheat-224212", true))()
+            Rayfield:Notify({
+                Title = "Yumurta Çalma Aktif!",
+                Content = "Steal an Egg scripti başarıyla yüklendi.",
+                Duration = 3
+            })
         end)
-    end
-end)
+    end,
+})
 
--- Ana Render Döngüsü
-RunService.RenderStepped:Connect(function()
-    pcall(function()
-        local activeESPColor = getgenv().XXSYSettings.Rainbow and getRainbowColor() or getgenv().XXSYSettings.ESPColor
-        local activeFOVColor = getgenv().XXSYSettings.Rainbow and getRainbowColor() or getgenv().XXSYSettings.FOVColor
+GamesTab:CreateButton({
+    Name = "🔪 Murder Mystery 2 (MM2 Pro Hub)",
+    Callback = function()
+        pcall(function()
+            local Players = game:GetService("Players")
+            local RunService = game:GetService("RunService")
+            local Workspace = game:GetService("Workspace")
+            local CoreGui = game:GetService("CoreGui")
+            local Camera = Workspace.CurrentCamera
+            local LocalPlayer = Players.LocalPlayer
 
-        -- FOV Çemberi Güncelleme
-        FOVFrame.Size = UDim2.new(0, getgenv().XXSYSettings.FOVRadius * 2, 0, getgenv().XXSYSettings.FOVRadius * 2)
-        FOVFrame.Position = UDim2.new(0, Camera.ViewportSize.X / 2, 0, Camera.ViewportSize.Y / 2)
-        FOVStroke.Color = activeFOVColor
-        FOVGui.Enabled = getgenv().XXSYSettings.FOV
+            local MM2Settings = {
+                ESP = false,
+                RoleReveal = false,
+                SheriffAimbot = false,
+                AutoGrabGun = false,
+                KillAura = false,
+                FlingPlayer = false,
+                FlingTarget = "",
+                FOVRadius = 150
+            }
 
-        -- Aimbot Mantığı (PC: Sağ Tık | Mobil: MobileAimbot Seçeneği Açıkken Direk Çalışır)
-        local shouldAimbot = (getgenv().XXSYSettings.Aimbot and aimbotHolding) or getgenv().XXSYSettings.MobileAimbot
+            local MM2Window = Rayfield:CreateWindow({
+                Name = "SarsX Hub | MM2 Pro",
+                LoadingTitle = "MM2 Ultimate Optimization",
+                LoadingSubtitle = "by SarsX",
+                ConfigurationSaving = { Enabled = false },
+                KeySystem = false,
+            })
 
-        if shouldAimbot then
-            local closestTarget = nil
-            local shortestDist = getgenv().XXSYSettings.FOVRadius
-            local mousePos = UserInputService:GetMouseLocation()
-            local cameraPos = Camera.CFrame.Position
-            local localChar = LocalPlayer.Character
+            local VisualTab = MM2Window:CreateTab("👁️ Visuals & ESP", 4483345998)
+            local CombatTab = MM2Window:CreateTab("🔪 Combat & Aim", 4483362458)
+            local TrollTab = MM2Window:CreateTab("🌪️ Troll & Misc", 4483362458)
 
-            for _, player in ipairs(Players:GetPlayers()) do
-                if player ~= LocalPlayer and player.Character then
-                    local char = player.Character
-                    local humanoid = char:FindFirstChild("Humanoid")
-                    local head = char:FindFirstChild("Head")
-                    if humanoid and humanoid.Health > 0 and head then
-                        local screenPos, onScreen = Camera:WorldToViewportPoint(head.Position)
-                        if onScreen then
-                            local dist = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
-                            if dist < shortestDist then
-                                local rayParams = RaycastParams.new()
-                                rayParams.FilterType = Enum.RaycastFilterType.Exclude
-                                rayParams.FilterDescendantsInstances = {localChar, char}
-                                local rayResult = workspace:Raycast(cameraPos, head.Position - cameraPos, rayParams)
-                                if not rayResult then
-                                    shortestDist = dist
-                                    closestTarget = head
-                                end
-                            end
-                        end
-                    end
+            VisualTab:CreateSection("ESP & Rol Tespit Sistemi")
+            VisualTab:CreateToggle({
+                Name = "ESP & Wallhack (Kutular)",
+                CurrentValue = false,
+                Callback = function(Value) MM2Settings.ESP = Value end,
+            })
+            VisualTab:CreateToggle({
+                Name = "Gelişmiş Rol Görme (Katil Kırmızı / Şerif Mavi)",
+                CurrentValue = false,
+                Callback = function(Value) MM2Settings.RoleReveal = Value end,
+            })
+
+            CombatTab:CreateSection("Şerif Aimbot (PC & Mobil)")
+            CombatTab:CreateToggle({
+                Name = "Şerif Aimbot (Katile Kilitlen)",
+                CurrentValue = false,
+                Callback = function(Value) MM2Settings.SheriffAimbot = Value end,
+            })
+            CombatTab:CreateSlider({
+                Name = "Aimbot FOV Yarıçapı",
+                Range = {50, 400},
+                Increment = 5,
+                Suffix = "px",
+                CurrentValue = 150,
+                Callback = function(Value) MM2Settings.FOVRadius = Value end,
+            })
+            CombatTab:CreateSection("Otomatik Özellikler")
+            CombatTab:CreateToggle({
+                Name = "Otomatik Silah Alma (Gun Grab)",
+                CurrentValue = false,
+                Callback = function(Value) MM2Settings.AutoGrabGun = Value end,
+            })
+            CombatTab:CreateToggle({
+                Name = "Kill Aura (Katilken Yakındakileri Kes)",
+                CurrentValue = false,
+                Callback = function(Value) MM2Settings.KillAura = Value end,
+            })
+
+            TrollTab:CreateSection("Fling (Uçurma) Sistemi")
+            TrollTab:CreateInput({
+                Name = "Fling Hedef Oyuncu (İsmi)",
+                PlaceholderText = "Oyuncu adının başı...",
+                RemoveTextAfterFocusLost = false,
+                Callback = function(Text) MM2Settings.FlingTarget = Text end,
+            })
+            TrollTab:CreateToggle({
+                Name = "Hedefi Flingle (Uçur)",
+                CurrentValue = false,
+                Callback = function(Value) MM2Settings.FlingPlayer = Value end,
+            })
+
+            local FOVGui = Instance.new("ScreenGui")
+            FOVGui.Name = "MM2FOVCircle"
+            FOVGui.Parent = CoreGui
+
+            local FOVFrame = Instance.new("Frame")
+            FOVFrame.Parent = FOVGui
+            FOVFrame.BackgroundTransparency = 1
+            FOVFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+            FOVFrame.Size = UDim2.new(0, 300, 0, 300)
+            FOVFrame.Position = UDim2.new(0, Camera.ViewportSize.X / 2, 0, Camera.ViewportSize.Y / 2)
+
+            local FOVStroke = Instance.new("UIStroke")
+            FOVStroke.Color = Color3.fromRGB(0, 150, 255)
+            FOVStroke.Thickness = 2
+            FOVStroke.Parent = FOVFrame
+
+            local FOVCorner = Instance.new("UICorner")
+            FOVCorner.CornerRadius = UDim.new(1, 0)
+            FOVCorner.Parent = FOVFrame
+
+            local espCache = {}
+
+            local function cleanESP(player)
+                if espCache[player] then
+                    if espCache[player].Highlight then espCache[player].Highlight:Destroy() end
+                    if espCache[player].Billboard then espCache[player].Billboard:Destroy() end
+                    espCache[player] = nil
                 end
             end
 
-            if closestTarget then
-                Camera.CFrame = CFrame.new(Camera.CFrame.Position, closestTarget.Position)
-            end
-        end
+            local function setupESP(player)
+                if player == LocalPlayer then return end
+                cleanESP(player)
+                local function apply(char)
+                    pcall(function()
+                        cleanESP(player)
+                        local head = char:WaitForChild("Head", 5)
+                        if not head then return end
 
-        -- Kol / Silah Rainbow Efekti
-        if getgenv().XXSYSettings.ArmRainbow then
-            local char = LocalPlayer.Character
-            local armCol = getRainbowColor()
-            if char then
-                for _, part in ipairs(char:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        local pName = part.Name
-                        if pName:find("Arm") or pName:find("Hand") or pName:find("Tool") or pName:find("Handle") then
-                            pcall(function() part.Color = armCol end)
-                        end
-                    end
+                        local hl = Instance.new("Highlight")
+                        hl.Adornee = char
+                        hl.FillTransparency = 0.5
+                        hl.OutlineTransparency = 0
+                        hl.Parent = char
+
+                        local bb = Instance.new("BillboardGui")
+                        bb.Adornee = head
+                        bb.Size = UDim2.new(0, 150, 0, 40)
+                        bb.StudsOffset = Vector3.new(0, 2.2, 0)
+                        bb.AlwaysOnTop = true
+
+                        local txt = Instance.new("TextLabel")
+                        txt.Parent = bb
+                        txt.BackgroundTransparency = 1
+                        txt.Size = UDim2.new(1, 0, 1, 0)
+                        txt.Font = Enum.Font.FredokaOne
+                        txt.TextSize = 12
+                        txt.TextStrokeTransparency = 0
+                        txt.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+                        bb.Parent = char
+                        espCache[player] = { Highlight = hl, Billboard = bb, Text = txt, Character = char }
+                    end)
                 end
+                player.CharacterAdded:Connect(apply)
+                if player.Character then task.spawn(function() apply(player.Character) end) end
             end
-        end
 
-        -- ESP Görsellerini Güncelleme
-        for _, player in ipairs(Players:GetPlayers()) do
-            if player ~= LocalPlayer then
-                local data = espCache[player]
-                if data and data.Character and data.Humanoid and data.RootPart and data.Head then
-                    local isAlive = data.Humanoid.Health > 0
-                    if not isAlive then
-                        if data.Highlight then data.Highlight.Enabled = false end
-                        if data.Billboard then data.Billboard.Enabled = false end
-                        if data.Line then data.Line.Visible = false end
-                        if data.BoxOutline then data.BoxOutline.Visible = false end
-                        if data.BoxInline then data.BoxInline.Visible = false end
-                        if data.HealthBarOutline then data.HealthBarOutline.Visible = false end
-                        if data.HealthBarInline then data.HealthBarInline.Visible = false end
-                        if data.SkeletonLines then
-                            for _, line in pairs(data.SkeletonLines) do line.Visible = false end
-                        end
-                    else
-                        if data.Highlight then
-                            data.Highlight.Enabled = getgenv().XXSYSettings.ESP
-                            data.Highlight.FillColor = activeESPColor
-                        end
-                        if data.Billboard then
-                            data.Billboard.Enabled = getgenv().XXSYSettings.ESP and getgenv().XXSYSettings.Info
-                            data.Text.TextColor3 = activeESPColor
-                            if data.RootPart then
-                                local dist = math.floor((Camera.CFrame.Position - data.RootPart.Position).Magnitude)
-                                data.Text.Text = player.Name .. " [" .. math.floor(data.Humanoid.Health) .. "HP] - " .. dist .. "s"
-                            end
-                        end
+            for _, p in ipairs(Players:GetPlayers()) do setupESP(p) end
+            Players.PlayerAdded:Connect(setupESP)
+            Players.PlayerRemoving:Connect(function(p) cleanESP(p) end)
 
-                        -- Tracers
-                        if data.Line then
-                            if getgenv().XXSYSettings.ESP and getgenv().XXSYSettings.Tracers then
-                                local vector, onScreen = Camera:WorldToViewportPoint(data.RootPart.Position)
-                                if onScreen then
-                                    data.Line.Visible = true
-                                    data.Line.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
-                                    data.Line.To = Vector2.new(vector.X, vector.Y)
-                                    data.Line.Color = activeESPColor
-                                else
-                                    data.Line.Visible = false
-                                end
-                            else
-                                data.Line.Visible = false
-                            end
-                        end
+            RunService.RenderStepped:Connect(function()
+                pcall(function()
+                    FOVFrame.Size = UDim2.new(0, MM2Settings.FOVRadius * 2, 0, MM2Settings.FOVRadius * 2)
+                    FOVFrame.Position = UDim2.new(0, Camera.ViewportSize.X / 2, 0, Camera.ViewportSize.Y / 2)
+                    FOVGui.Enabled = MM2Settings.SheriffAimbot
 
-                        -- CS:GO Box & Can Barı
-                        if data.BoxInline and data.BoxOutline then
-                            if getgenv().XXSYSettings.ESP and getgenv().XXSYSettings.Box then
-                                local rootPos, rootOnScreen = Camera:WorldToViewportPoint(data.RootPart.Position)
-                                if rootOnScreen then
-                                    local headPos = Camera:WorldToViewportPoint(data.Head.Position + Vector3.new(0, 0.5, 0))
-                                    local legPos = Camera:WorldToViewportPoint(data.RootPart.Position - Vector3.new(0, 3, 0))
-                                    
-                                    local height = math.abs(headPos.Y - legPos.Y)
-                                    local width = height / 2
-                                    local size = Vector2.new(width, height)
-                                    local pos = Vector2.new(rootPos.X - width / 2, headPos.Y)
-
-                                    data.BoxOutline.Size = size
-                                    data.BoxOutline.Position = pos
-                                    data.BoxOutline.Visible = true
-
-                                    data.BoxInline.Size = size
-                                    data.BoxInline.Position = pos
-                                    data.BoxInline.Color = activeESPColor
-                                    data.BoxInline.Visible = true
-
-                                    local healthFraction = math.clamp(data.Humanoid.Health / data.Humanoid.MaxHealth, 0, 1)
-                                    local barHeight = height * healthFraction
-                                    
-                                    data.HealthBarOutline.From = Vector2.new(pos.X - 6, pos.Y + height)
-                                    data.HealthBarOutline.To = Vector2.new(pos.X - 6, pos.Y)
-                                    data.HealthBarOutline.Visible = true
-
-                                    data.HealthBarInline.From = Vector2.new(pos.X - 6, pos.Y + height)
-                                    data.HealthBarInline.To = Vector2.new(pos.X - 6, pos.Y + height - barHeight)
-                                    data.HealthBarInline.Color = activeESPColor
-                                    data.HealthBarInline.Visible = true
-                                else
-                                    data.BoxOutline.Visible = false
-                                    data.BoxInline.Visible = false
-                                    data.HealthBarOutline.Visible = false
-                                    data.HealthBarInline.Visible = false
-                                end
-                            else
-                                data.BoxOutline.Visible = false
-                                data.BoxInline.Visible = false
-                                data.HealthBarOutline.Visible = false
-                                data.HealthBarInline.Visible = false
-                            end
-                        end
-
-                        -- R6 Skeleton Çizimi
-                        if data.SkeletonLines then
-                            if getgenv().XXSYSettings.ESP and getgenv().XXSYSettings.Skeleton then
+                    for _, player in ipairs(Players:GetPlayers()) do
+                        if player ~= LocalPlayer then
+                            local data = espCache[player]
+                            if data and data.Character and data.Character:FindFirstChild("Humanoid") and data.Character.Humanoid.Health > 0 then
                                 local char = data.Character
-                                local torso = char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
-                                local leftArm = char:FindFirstChild("Left Arm") or char:FindFirstChild("LeftUpperArm")
-                                local rightArm = char:FindFirstChild("Right Arm") or char:FindFirstChild("RightUpperArm")
-                                local leftLeg = char:FindFirstChild("Left Leg") or char:FindFirstChild("LeftUpperLeg")
-                                local rightLeg = char:FindFirstChild("Right Leg") or char:FindFirstChild("RightUpperLeg")
+                                local bp = player:FindFirstChild("Backpack")
+                                local hasKnife = char:FindFirstChild("Knife") or (bp and bp:FindFirstChild("Knife"))
+                                local hasGun = char:FindFirstChild("Gun") or (bp and bp:FindFirstChild("Gun"))
 
-                                if torso and data.Head then
-                                    local headPos, headOn = Camera:WorldToViewportPoint(data.Head.Position)
-                                    local torsoPos, torsoOn = Camera:WorldToViewportPoint(torso.Position)
+                                local roleColor = Color3.fromRGB(0, 255, 0)
+                                local roleName = "Innocent"
 
-                                    if headOn and torsoOn then
-                                        data.SkeletonLines["Head_Torso"].From = Vector2.new(headPos.X, headPos.Y)
-                                        data.SkeletonLines["Head_Torso"].To = Vector2.new(torsoPos.X, torsoPos.Y)
-                                        data.SkeletonLines["Head_Torso"].Color = activeESPColor
-                                        data.SkeletonLines["Head_Torso"].Visible = true
+                                if hasKnife then
+                                    roleColor = Color3.fromRGB(255, 0, 0)
+                                    roleName = "MURDERER"
+                                elseif hasGun then
+                                    roleColor = Color3.fromRGB(0, 150, 255)
+                                    roleName = "SHERIFF"
+                                end
+
+                                if MM2Settings.ESP or MM2Settings.RoleReveal then
+                                    data.Highlight.Enabled = true
+                                    data.Highlight.FillColor = roleColor
+                                    data.Highlight.OutlineColor = roleColor
+                                    
+                                    if MM2Settings.RoleReveal and (hasKnife or hasGun) then
+                                        data.Text.Text = player.Name .. " [" .. roleName .. "]"
+                                        data.Text.TextColor3 = roleColor
+                                        data.Billboard.Enabled = true
                                     else
-                                        data.SkeletonLines["Head_Torso"].Visible = false
-                                    end
-
-                                    if leftArm then
-                                        local laPos, laOn = Camera:WorldToViewportPoint(leftArm.Position)
-                                        if torsoOn and laOn then
-                                            data.SkeletonLines["LeftArm_Torso"].From = Vector2.new(torsoPos.X, torsoPos.Y)
-                                            data.SkeletonLines["LeftArm_Torso"].To = Vector2.new(laPos.X, laPos.Y)
-                                            data.SkeletonLines["LeftArm_Torso"].Color = activeESPColor
-                                            data.SkeletonLines["LeftArm_Torso"].Visible = true
-                                        else
-                                            data.SkeletonLines["LeftArm_Torso"].Visible = false
-                                        end
-                                    end
-
-                                    if rightArm then
-                                        local raPos, raOn = Camera:WorldToViewportPoint(rightArm.Position)
-                                        if torsoOn and raOn then
-                                            data.SkeletonLines["RightArm_Torso"].From = Vector2.new(torsoPos.X, torsoPos.Y)
-                                            data.SkeletonLines["RightArm_Torso"].To = Vector2.new(raPos.X, raPos.Y)
-                                            data.SkeletonLines["RightArm_Torso"].Color = activeESPColor
-                                            data.SkeletonLines["RightArm_Torso"].Visible = true
-                                        else
-                                            data.SkeletonLines["RightArm_Torso"].Visible = false
-                                        end
-                                    end
-
-                                    if leftLeg then
-                                        local llPos, llOn = Camera:WorldToViewportPoint(leftLeg.Position)
-                                        if torsoOn and llOn then
-                                            data.SkeletonLines["LeftLeg_Torso"].From = Vector2.new(torsoPos.X, torsoPos.Y)
-                                            data.SkeletonLines["LeftLeg_Torso"].To = Vector2.new(llPos.X, llPos.Y)
-                                            data.SkeletonLines["LeftLeg_Torso"].Color = activeESPColor
-                                            data.SkeletonLines["LeftLeg_Torso"].Visible = true
-                                        else
-                                            data.SkeletonLines["LeftLeg_Torso"].Visible = false
-                                        end
-                                    end
-
-                                    if rightLeg then
-                                        local rlPos, rlOn = Camera:WorldToViewportPoint(rightLeg.Position)
-                                        if torsoOn and rlOn then
-                                            data.SkeletonLines["RightLeg_Torso"].From = Vector2.new(torsoPos.X, torsoPos.Y)
-                                            data.SkeletonLines["RightLeg_Torso"].To = Vector2.new(rlPos.X, rlPos.Y)
-                                            data.SkeletonLines["RightLeg_Torso"].Color = activeESPColor
-                                            data.SkeletonLines["RightLeg_Torso"].Visible = true
-                                        else
-                                            data.SkeletonLines["RightLeg_Torso"].Visible = false
-                                        end
+                                        data.Text.Text = player.Name
+                                        data.Text.TextColor3 = Color3.fromRGB(255, 255, 255)
+                                        data.Billboard.Enabled = MM2Settings.ESP
                                     end
                                 else
-                                    for _, l in pairs(data.SkeletonLines) do l.Visible = false end
+                                    data.Highlight.Enabled = false
+                                    data.Billboard.Enabled = false
                                 end
                             else
-                                for _, l in pairs(data.SkeletonLines) do l.Visible = false end
+                                if data and data.Highlight then
+                                    data.Highlight.Enabled = false
+                                    data.Billboard.Enabled = false
+                                end
                             end
                         end
                     end
-                end
-            end
-        end
-    end)
-end)
+
+                    if MM2Settings.SheriffAimbot then
+                        local closestTarget = nil
+                        local shortestDist = MM2Settings.FOVRadius
+                        local screenCenter = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+
+                        for _, player in ipairs(Players:GetPlayers()) do
+                            if player ~= LocalPlayer and player.Character then
+                                local char = player.Character
+                                local hum = char:FindFirstChild("Humanoid")
+                                local head = char:FindFirstChild("Head")
+                                local bp = player:FindFirstChild("Backpack")
+                                local hasKnife = char:FindFirstChild("Knife") or (bp and bp:FindFirstChild("Knife"))
+
+                                if hum and hum.Health > 0 and head and hasKnife then
+                                    local screenPos, onScreen = Camera:WorldToViewportPoint(head.Position)
+                                    if onScreen then
+                                        local dist = (Vector2.new(screenPos.X, screenPos.Y) - screenCenter).Magnitude
+                                        if dist < shortestDist then
+                                            shortestDist = dist
+                                            closestTarget = head
+                                        end
+                                    end
+                                end
+                            end
+                        end
+
+                        if closestTarget then
+                            Camera.CFrame = CFrame.new(Camera.CFrame.Position, closestTarget.Position)
+                        end
+                    end
+
+                    if MM2Settings.AutoGrabGun then
+                        for _, obj in ipairs(Workspace:GetDescendants()) do
+                            if obj.Name == "GunDrop" and obj:IsA("BasePart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                                LocalPlayer.Character.HumanoidRootPart.CFrame = obj.CFrame
+                            end
+                        end
+                    end
+
+                    if MM2Settings.KillAura and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Knife") then
+                        local myRoot = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                        if myRoot then
+                            for _, player in ipairs(Players:GetPlayers()) do
+                                if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                                    local targetRoot = player.Character.HumanoidRootPart
+                                    if (myRoot.Position - targetRoot.Position).Magnitude < 15 then
+                                        local knife = LocalPlayer.Character:FindFirstChild("Knife")
+                                        if knife:FindFirstChild("Remote") then
+                                            knife.Remote:FireServer(targetRoot.Position)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+
+                    if MM2Settings.FlingPlayer and MM2Settings.FlingTarget ~= "" then
+                        for _, player in ipairs(Players:GetPlayers()) do
+                            if player.Name:lower():sub(1, #MM2Settings.FlingTarget) == MM2Settings.FlingTarget:lower() then
+                                if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                                    local targetRoot = player.Character.HumanoidRootPart
+                                    local myRoot = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                                    if myRoot then
+                                        myRoot.CFrame = targetRoot.CFrame
+                                        myRoot.AssemblyLinearVelocity = Vector3.new(35000, 35000, 35000)
+                                        myRoot.AssemblyAngularVelocity = Vector3.new(35000, 35000, 35000)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end)
+            end)
+
+            Rayfield:Notify({
+                Title = "MM2 Yüklendi!",
+                Content = "Murder Mystery 2 Pro Hub başarıyla açıldı.",
+                Duration = 3
+            })
+        end)
+    end,
+})
